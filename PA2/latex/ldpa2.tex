@@ -1,0 +1,201 @@
+\documentclass[a4paper, 12pt, answers]{exam}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{bm}
+\usepackage{advdate}
+\usepackage{datetime}
+\usepackage[mathcal]{eucal}
+\usepackage{dsfont}
+\usepackage[numbered,framed]{matlab-prettifier}
+\usepackage{tkz-euclide}
+\usepackage[colorlinks,urlcolor=blue]{hyperref}
+
+\usetkzobj{all}
+\usepackage{url}
+\newdate{issuedate}{11}{10}{2019}
+\newdate{duedate}{25}{10}{2019}
+
+\DeclareMathOperator{\C}{count}
+% \newcommand{\duedate}[1][14]{%
+% \begingroup
+% \AdvanceDate[#1]%
+% \today%
+% \endgroup
+% }%
+
+\input{lddef}
+
+\makeatletter
+\@ifclasswith{exam}{answers}{\newcommand{\firstblock}{comments_ldps1}}{\newcommand{\firstblock}{policies}}
+\makeatother
+
+\begin{document}
+
+\pagestyle{headandfoot}
+\runningheadrule
+
+
+\newcounter{psctr}
+\setcounter{psctr}{2} % set to the times of problem
+
+\runningheader{Programming Assignment \thepsctr}
+              {\textsc{Learning from Data}}
+              { Page \thepage\ of \numpages}
+\firstpagefooter{}{}{}
+\runningfooter{}{}{}
+
+
+\newcounter{Sequ}
+\newenvironment{Sequation}
+   {\stepcounter{Sequ}%
+     \addtocounter{equation}{-1}%
+     \renewcommand\theequation{S\arabic{Sequ}}\equation}
+   {\endequation}
+%\topskip0pt
+
+% \vspace*{\fill}
+\centering
+
+% \vspace{0.3em}
+\centering
+\renewcommand{\thequestion}{\arabic{psctr}.\arabic{question}}
+\courseheader
+
+\begin{center}
+  \underline{\bf Programming Assignment \thepsctr} \\
+\end{center}
+\begin{flushleft}
+  \textbf{Issued:} \displaydate{issuedate} \hfill
+  \textbf{Due:} \displaydate{duedate} 
+\end{flushleft}
+
+\hrule 
+
+\input{\firstblock}
+
+%\pointname{}
+%\vspace{\footskip}
+\vspace{1em}
+
+
+%\pointname{}
+%\vspace{\footskip}
+%\vspace{1em}
+
+\begin{questions}
+\question \label{writtenhw} (4 points) \emph{MLE.} Recall that the naive Bayes model tries to maximize the likelihood of the joint distribution $P(X,Y)$ as:
+
+\begin{equation*}
+L(\phi_y, \phi_j(x|y)) = \prod_{i=1}^m p(x^{(i)},y^{(i)})
+\end{equation*}
+where the $\phi_j(x|y):=p(X_j=x|Y=y)$ and $\phi_y:=p(Y=y)$ are the parameters required to be estimated for the model. Here, the $x_j,\forall j\in\{1,..,d\}$ is assumed be binary-valued: $x \in \mathcal{X} := \{0, 1\}$, and the label $y \in \mathcal{Y} := \{1,...,K\}$. Please derive the \textbf{maximum likelihood estimates} of the $\phi_j(x|y)$ and $\phi_y$ for the NB model.
+
+\begin{solution}
+The log-likelihood of the equation described above can be transformed as:
+\begin{equation} \label{eq.1}
+\begin{aligned}
+\log L(\phi_y, \phi_j(x|y)) &= \sum_{i=1}^m \log p(x^{(i)},y^{(i)}) \\
+&= \sum_{i=1}^m \log \left ( p(y^{(i)}) \prod_{j=1}^d p(x_j^{(i)} \mid y^{(i)}) \right ) \\
+&= \underbrace{\sum_{i=1}^m \log p(y^{(i)})}_{(\bf{I})} + \underbrace{\sum_{i=1}^m \sum_{j=1}^d \log p(x_j^{(i)} \mid y^{(i)})}_{(\bf{II})}
+\end{aligned}
+\end{equation}
+First, let's concentrate on the part $(\bf{I})$ in the above Eq.\eqref{eq.1}:
+\begin{equation} \label{logpy}
+\begin{aligned} 
+\sum_{i=1}^m \log p(y^{(i)}) &= \sum_{y\in\mathcal{Y}} \sum_{i=1}^m  \1 \{y^{(i)}=y\}}\log \phi_y \\
+&= \sum_{y=1}^K \C(y)\log \phi_y
+\end{aligned}
+\end{equation}
+Our goal is to maximize the Eq.\eqref{logpy} subject to the constraints $\phi_y > 0$ and $\sum_{y\in\mathcal{Y}}\phi_y = 1$, which is easy to achieve by introducing a \textbf{Lagrangian} as:
+\begin{equation}
+g(\lambda, \phi_y) = \sum_{y=1}^K \C(y) \log \phi_y - \lambda \left( \sum_{y=1}^K\phi_y - 1 \right)
+\end{equation}
+Note that we do not include the part $(\bf{II})$ above because it has nothing to do with the $\phi_y$. Now differentiating with respect to $\phi_y$ gives
+\begin{equation}
+\frac{\partial g(\lambda, \phi)}{\partial \phi_y} = \frac{\C(y)}{\phi_y} - \lambda
+\end{equation}
+and setting the derivatives to zero gives
+\begin{equation} \label{phiy}
+\phi_y = \frac{\C(y)}{\lambda}
+\end{equation}
+Taking the summation of Eq.\eqref{phiy} over $y$ gives
+\begin{equation}
+\sum_y \phi_y = \frac1{\lambda} \sum_y \C(y) = 1
+\end{equation}
+hence we know that $\lambda = \sum_y \C(y)$, and we get the MLE of the $\phi_y$ as:
+\begin{equation}
+\phi_y = \frac{\C(y)}{\sum_{y=1}^K \C(y)} = \frac{\C(y)}{m}
+\end{equation}
+Similarly, the part $(\bf{II})$ can be transformed like:
+
+\begin{equation}
+\begin{aligned}
+({\rm II}) &= \sum_{x\in\mathcal{X}}\sum_{y \in \mathcal{Y}}\sum_{j=1}^d \sum_{i=1}^m \1\{x_j^{(i)}=x \land y^{(i)}=y\} \phi_j(x \mid y) \\
+&= \sum_{x\in\mathcal{X}}\sum_{y \in \mathcal{Y}} \C_j(x\mid y) \phi_j(x \mid y)
+\end{aligned}
+\end{equation}
+Our goal now is to maximize the above equation with the constraints that $\phi_j(x\mid y) > 0$ and 
+\begin{equation} \label{eq.9}
+\sum_{x\in \mathcal{X}} \phi_j(x\mid y) = 1
+\end{equation}
+Building a Lagrangian as
+\begin{equation}
+h(\lambda, \phi_j(x\mid y)) = \sum_{x\in\mathcal{X}}\sum_{y \in \mathcal{Y}} \C_j(x\mid y) \phi_j(x \mid y) - \lambda \left (\sum_{x\in \mathcal{X}} \phi_j(x \mid y) - 1 \right )
+\end{equation}
+Same, let's take the derivatives $\frac{\partial h(\lambda, \phi_j(x\mid y))}{\partial \phi_j(x\mid y)}$ and make it zero, we will obtain
+\begin{equation} \label{eq.11}
+\phi_j(x\mid y) = \frac{\C_j(x\mid y)}{\lambda}
+\end{equation}
+Combining the Eq.\eqref{eq.9} and the Eq.\eqref{eq.11}, the MLE of $\phi_j(x\mid y)$ is
+\begin{equation}
+\phi_j(x\mid y) = \frac{\C_j(x\mid y)}{\sum_{x\in\mathcal{X}} \C_j(x\mid y)} = \frac{\C_j(x\mid y)}{\C(y)}
+\end{equation}
+
+\end{solution}
+
+\question (6 points) \emph{Naive Bayes.} We have prepared a binary classification dataset drawn from the \href{https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary.html}{UCI Adult} which contains 1,605 data with 123 features in total. The task here is to build a \textbf{Bernoulli naive Bayes} classifier that does inference as:
+
+\begin{equation*}
+\begin{aligned}
+p(y=k|\bm{x}) &= \frac{p(\bm{x}|y=k)p(y=k)}{p(\bm{x})} \\
+& = \frac{p(y=k)\prod_{i=1}^np(x_i|y=k)}{p(\bm{x})}
+\end{aligned}
+\end{equation*}
+
+The Bernoulli naive Bayes implements the naive Bayes training and classification algorithms for data that is distributed according to \textbf{multivariate Bernoulli distributions}; i.e., there may be multiple features but each one is assumed to be a binary-valued (Bernoulli, boolean) variable. Therefore, this class requires samples to be represented as binary-valued feature vectors. See details in the \textbf{naive\_bayes.py}.
+
+
+\end{questions}
+
+
+\nocite{*}
+\begin{flushleft}
+\textbf{Notice}: \\
+\begin{enumerate}
+\item Again, use matrix operations other than loops for efficiency. If the running time exceeds 5 minutes, you will get point deductions.
+\item You are ought to acquire at least $75\%$ test accuracy, and the correctness of your implementation will also be checked.
+\item \textbf{Submit your solution of question \ref{writtenhw} in pdf and the naive\_bayes.py together!}
+\end{enumerate}
+\end{flushleft}
+
+
+\begin{flushleft}
+\textbf{Tips:} \\
+\begin{enumerate}
+\item Do not forget the Laplace smoothing.
+\item Use $\log\prod(\cdot) = \sum \log(\cdot)$ to avoid operating on products.
+\item Note that the $P(x_i|y)=P(i|y)x_i + (\left 1-P(i|y)\right)(1-x_i)$ is used in Bernoulli naive Bayes's decision rule. You can compare your results with the \href{https://scikit-learn.org/stable/modules/naive_bayes.html#bernoulli-naive-bayes}{BernoulliNB} in \textbf{scikit-learn}, if your implementation is right, the results test accuracy shall be the same (or very close).
+\end{enumerate}
+\end{flushleft}
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
+
+%  LocalWords:  headandfoot covariance

@@ -1,0 +1,116 @@
+\documentclass[a4paper, 12pt, answers]{exam}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{bm}
+\usepackage{advdate}
+\usepackage{datetime}
+\usepackage[mathcal]{eucal}
+\usepackage{dsfont}
+\usepackage[numbered,framed]{matlab-prettifier}
+\usepackage{tkz-euclide}
+\usetkzobj{all}
+\usepackage{url}
+\newdate{issuedate}{27}{9}{2019}
+\newdate{duedate}{11}{10}{2019}
+
+% \newcommand{\duedate}[1][14]{%
+% \begingroup
+% \AdvanceDate[#1]%
+% \today%
+% \endgroup
+% }%
+
+\input{lddef}
+
+\makeatletter
+\@ifclasswith{exam}{answers}{\newcommand{\firstblock}{comments_ldps1}}{\newcommand{\firstblock}{policies}}
+\makeatother
+
+\begin{document}
+
+\pagestyle{headandfoot}
+\runningheadrule
+
+
+\newcounter{psctr}
+\setcounter{psctr}{1} % set to the times of problem
+
+\runningheader{Programming Assignment \thepsctr}
+              {\textsc{Learning from Data}}
+              { Page \thepage\ of \numpages}
+\firstpagefooter{}{}{}
+\runningfooter{}{}{}
+
+
+\newcounter{Sequ}
+\newenvironment{Sequation}
+   {\stepcounter{Sequ}%
+     \addtocounter{equation}{-1}%
+     \renewcommand\theequation{S\arabic{Sequ}}\equation}
+   {\endequation}
+%\topskip0pt
+
+% \vspace*{\fill}
+\centering
+
+% \vspace{0.3em}
+\centering
+\renewcommand{\thequestion}{\arabic{psctr}.\arabic{question}}
+\courseheader
+
+\begin{center}
+  \underline{\bf Programming Assignment \thepsctr} \\
+\end{center}
+\begin{flushleft}
+  \textbf{Issued:} \displaydate{issuedate} \hfill
+  \textbf{Due:} \displaydate{duedate} 
+\end{flushleft}
+
+\hrule 
+
+\input{\firstblock}
+
+%\pointname{}
+%\vspace{\footskip}
+\vspace{1em}
+
+
+%\pointname{}
+%\vspace{\footskip}
+%\vspace{1em}
+
+\begin{questions}
+\question (5 points) \emph{Linear regression.} Consider the linear observation model
+\begin{equation*}
+\by = X\bw + \bc
+\end{equation*}
+where the $X$ is a $10000 \times 10$ matrix, and $\bw,\bc$ are column vectors with length 10 and 10000. Use gradient descent to find the $a$ that minimizes the loss $\frac12 \|X\bw-y\|^2_2$. See details in the \textbf{linear\_regression.py}.
+
+
+
+\question (5 points) \emph{Logistic regression.} The MNIST database contains 60000 training images and 10000 testing images. In this task, each image of the MNIST has been reshaped to a column vector of length $28\times28=784$. You need to calculate the gradient and update the weights to learn your model. See details in the \textbf{logistic\_regression.py}.
+
+\end{questions}
+
+
+\nocite{*}
+\begin{flushleft}
+\textbf{Notice}: \\
+\begin{enumerate}
+\item Use matrix operations other than loops for efficiency. If the running time exceeds 5 minutes, you will get point deductions.
+\item You are ought to acquire at leat $95\%$ test accuracy in your logistic binary classifier. 
+\end{enumerate}
+\end{flushleft}
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
+
+%  LocalWords:  headandfoot covariance
