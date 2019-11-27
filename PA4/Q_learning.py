@@ -58,9 +58,9 @@ class Environment:
 
         reward = self.reward[next_state[0], next_state[1]]
         self.reward[next_state[0], next_state[1]] = 0
-
         next_state = json.dumps(next_state)
 
+        # fixed condition adviced by Shi Mao
         if reward < 0 or reward == 4:
             done = True
 
@@ -76,18 +76,22 @@ class Environment:
             state: str, the initial state.
         """
         
+        self.reward = self.raw_reward.copy()
+
         if is_training:
             # randomly init
             while True:
                 init_state = np.random.randint(0,4,(2))
-                if self.reward[init_state[0],init_state[1]] >= 0:
+                init_reward = self.reward[init_state[0],init_state[1]]
+                # fixed condition adviced by Shi Mao
+                if init_reward >= 0 and init_reward != 4:
                     init_state = init_state.tolist()
                     break
         else:
             init_state = [0,0]
 
         self.state = json.dumps(init_state)
-        self.reward = self.raw_reward.copy()
+        
         return self.state
 
 "define the agent"
