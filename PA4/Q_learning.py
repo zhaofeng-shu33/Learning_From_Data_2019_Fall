@@ -50,14 +50,15 @@ class Environment:
         """
 
         done = False
-        next_state = json.loads(state)
+        current_state = json.loads(state)
         state_shift = self.action_map[action]
 
-        next_state = np.array(next_state) + np.array(state_shift)
+        next_state = np.array(current_state) + np.array(state_shift)
         next_state = next_state.tolist()
 
-        reward = self.reward[next_state[0], next_state[1]]
-        self.reward[next_state[0], next_state[1]] = 0
+        # fixed reward set adviced by Jiaxin Lin
+        reward = self.reward[current_state[0], current_state[1]]
+        self.reward[current_state[0], current_state[1]] = 0
         next_state = json.dumps(next_state)
 
         # fixed condition adviced by Shi Mao
