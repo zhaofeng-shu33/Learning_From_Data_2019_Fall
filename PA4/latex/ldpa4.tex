@@ -104,7 +104,7 @@ Now we are ought to help it learn from the reward matrix, thus it can eat the ch
 \hspace*{0.02in} {\bf Input:} %算法的输入， \hspace*{0.02in}用来控制位置，同时利用 \\ 进行换行
 Initialize $Q(s,a)$ arbitrarily
 \begin{algorithmic}[1]
-\For{for each episode}
+\For{each episode}
 \State Initialize $s$
 \While{$s$ is not terminal}
 \State Choose $a$ from $s$ using policy derived from $Q$ (e.g., $\epsilon$-greedy)
